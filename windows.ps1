@@ -613,5 +613,5 @@ Set-ItemProperty $_ "ScreenColors"         0x0F
 Set-ItemProperty $_ "PopupColors"          0xF0
 # Adjust opacity between 30% and 100%: 0x4C to 0xFF -or- 76 to 255
 Set-ItemProperty $_ "WindowAlpha"          0xF2
-
+}
 echo "Done. Note that some of these changes require a logout/restart to take effect."
