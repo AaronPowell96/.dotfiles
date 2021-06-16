@@ -169,7 +169,14 @@ center "Linking .gitconfig" "$GREEN"
 center "Linking .vscode" "$GREEN"
  ln -sf ~/.dotfiles/.vscode $(pwd)/.vscode
 center "Linking VSCode settings.json" "$GREEN"
- ln -sf ~/.dotfiles/.vscode/settings.json $APPDATA/Code/User/settings.json
+if [ -d "$APPDATA/Code" ]; then
+    if [ -d "'$APPDATA/Code/User" ]; then
+        ln -sf ~/.dotfiles/.vscode/settings.json $APPDATA/Code/User/settings.json
+    fi
+else
+mkdir $APPDATA/Code/User
+ln -sf ~/.dotfiles/.vscode/settings.json $APPDATA/Code/User/settings.json
+fi
 }
 
 ### Pin apps to taskbar and unpin edge. (Not sure how to unpin Windows Apps Store)
