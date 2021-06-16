@@ -57,6 +57,10 @@ then
 fi
 }
 
+check_running_admin() {
+        powershell.exe -noprofile -executionpolicy bypass -file ~/.dotfiles/admincheck.ps1
+}
+
 default_windows_settings() {
     center "Editing windows settings" "$YELLOW"
         powershell.exe -noprofile -executionpolicy bypass -file ~/.dotfiles/windows.ps1
@@ -135,7 +139,7 @@ setup_devtools() {
     }
     command_exists node || {
     center "Dev Tool: Installing Node.js" "$YELLOW"
-     nvm install latest
+     choco install nodejs-lts -fy
     }
     command_exists py || {
     center "Dev Tool: Installing Python" "$YELLOW"
@@ -146,7 +150,7 @@ setup_devtools() {
      choco install yarn -fy
     }
     center "Dev Tool: Installing Java JDK 11" "$YELLOW"
-     choco install jdk11 -fy
+     choco install corretto11jdk -fy
     center "Dev Tool: Installing VMWare" "$YELLOW"
      choco install vmwareworkstation -fy
 }
@@ -176,8 +180,11 @@ pin_to_taskbar(){
     center "Pinning Chrome" "$MAGENTA"
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\Google\Chrome\Application\chrome.exe" PIN
     center "Pinning VSCode" "$MAGENTA"
+    if [ -f "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" ]; then
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" PIN
+    else
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\Microsoft VS Code\Code.exe" PIN
+    fi
     if [ -d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe" ]; then
      center "Pinning Windows Terminal" "$MAGENTA"
      powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe" PIN
@@ -194,10 +201,13 @@ pin_to_taskbar(){
 }
 
 main() {
+   check_running_admin
    check_directory
    #Choco needs terminal restart, if installed assume done first steps
    command_exists choco || download_chocolatey
-   exec bash
+
+   start "" "C:\Program Files\Git\git-bash.exe"
+   echo new terminalllll
    command_exists choco || {
         error "choco is not installed, may need to restart terminal and run setup again ZzZ"
         exit 1
@@ -208,7 +218,7 @@ main() {
    setup_devtools
    setup_dotfiles
    pin_to_taskbar
-   command_exists choco || default_windows_settings
+   default_windows_settings
 }
 
 main
