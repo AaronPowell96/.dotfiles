@@ -206,7 +206,7 @@ main() {
    #Choco needs terminal restart, if installed assume done first steps
    command_exists choco || download_chocolatey
 
-   start "" "C:\Program Files\Git\git-bash.exe"
+   /git-bash.exe & > /dev/null 2&>1
    echo new terminalllll
    command_exists choco || {
         error "choco is not installed, may need to restart terminal and run setup again ZzZ"
