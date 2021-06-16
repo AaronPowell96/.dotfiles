@@ -21,7 +21,7 @@ color = true
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 [user]
-	name = Aaron Powell
+	name = Aaron
 	email = Apowell829@gmail.com
 [core]
-	editor = \"C:\\Users\\awpow\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe\" --wait
+	# editor = \'C:\\Users\\username\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe\' --wait

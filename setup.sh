@@ -1,3 +1,7 @@
+##### BEFORE HOLIDAY - Testing pinning apps to taskbar, mainly windows terminal issue, check the if statements, check if can fix the version
+
+
+
 ##############
 ### COLORS ###
 ##############
@@ -61,8 +65,7 @@ default_windows_settings() {
 download_chocolatey() {
 center "Running Chocolatey Install" "$BLUE" "$BLUE"
 # ### Chocolatey install
- powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
- PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
+ powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
 }
 
 download_fonts() {
@@ -78,9 +81,6 @@ center "Installing Cascadia-Code font" "$GREEN" "$GREEN"
 
 setup_terminal() {
 center "Setting up windows terminal" "$MAGENTA" "$MAGENTA"
-center "Terminal: Installing Cascadia-Code font" "$MAGENTA" "$MAGENTA"
-# ## Add cascadiacode font for windows terminal
- choco install cascadiacode -fy
 
 center "Terminal: Installing Windows Terminal" "$MAGENTA" "$MAGENTA"
 # ## Install Windows Terminal
@@ -88,23 +88,36 @@ center "Terminal: Installing Windows Terminal" "$MAGENTA" "$MAGENTA"
 
 center "Terminal: Symlinking Windows Terminal Settings" "$MAGENTA" "$MAGENTA"
 # ## Add a symlink for Windows Terminal settings.
+ if [ -d "$LOCALAPPDATA/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe" ]; then
  ln -sf ~/.dotfiles/windows-terminal-settings.json $LOCALAPPDATA/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
+    else
  ln -sf ~/.dotfiles/windows-terminal-settings.json $LOCALAPPDATA/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState/settings.json
+    fi
 }
 
 download_packages() {
 center "Downloading Applications" "$CYAN"
 ### Install all the packages
-center "App: Installing Chrome" "$CYAN"
+if [ ! -f "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ]; then
+ center "App: Installing Chrome" "$CYAN"
  choco install googlechrome -fy
-center "App: Installing Firefox" "$CYAN"
+fi
+if [ ! -f "C:\Program Files\Mozilla Firefox\firefox.exe" ]; then
+ center "App: Installing Firefox" "$CYAN"
  choco install firefox -fy
-center "App: Installing VsCode" "$CYAN"
+fi
+if [ ! -f "$LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe" ]; then
+ center "App: Installing VSCode" "$CYAN"
  choco install vscode -fy
-center "App: Installing Postman" "$CYAN"
+fi
+if [ ! -f "$LOCALAPPDATA\Postman\Postman.exe" ]; then
+ center "App: Installing Postman" "$CYAN"
  choco install postman -fy
-center "App: Installing Spotify" "$CYAN"
+fi
+if [ ! -f "$APPDATA\Spotify\Spotify.exe" ]; then
+ center "App: Installing Spotify" "$CYAN"
  choco install spotify -fy
+fi
 ### choco install <package_name> repeats for all the packages you want to install
 }
 
@@ -116,31 +129,35 @@ setup_devtools() {
         error "git is not installed"
         exit 1
     }
-
-    center "Dev Tool: Installing Node Version Manager" "$YELLOW"
+    command_exists nvm || {
+     center "Dev Tool: Installing Node Version Manager" "$YELLOW"
      choco install nvm -fy
-
+    }
+    command_exists node || {
     center "Dev Tool: Installing Node.js" "$YELLOW"
      nvm install latest
-
+    }
+    command_exists py || {
     center "Dev Tool: Installing Python" "$YELLOW"
      choco install python -fy
-
-    center "Dev Tool: Installing Java JDK 11" "$YELLOW"
-     choco install jdk11 -fy
-
+    }
+    command_exists yarn || {
     center "Dev Tool: Installing Yarn" "$YELLOW"
      choco install yarn -fy
-
-    center "Dev Tool: Installing VirtualBox" "$YELLOW"
-     choco install virtualbox -fy
+    }
+    center "Dev Tool: Installing Java JDK 11" "$YELLOW"
+     choco install jdk11 -fy
+    center "Dev Tool: Installing VMWare" "$YELLOW"
+     choco install vmwareworkstation -fy
 }
 
 setup_dotfiles(){
 center "Dotfile: Symlinking settings" "$GREEN"
 # ## Symlink dot files.
+center "Linking .bash_aliases" "$GREEN"
+ln -sf ~/.dotfiles/.bash_aliases ~/.bash_aliases 
 center "Linking .bashrc" "$GREEN"
- ln -sf ~/.dotfiles/.bashrc ~/.bashrc
+ln -sf ~/.dotfiles/.bashrc ~/.bashrc 
 center "Linking .bash_profile" "$GREEN"
  ln -sf ~/.dotfiles/.bash_profile ~/.bash_profile
 center "Linking .gitconfig" "$GREEN"
@@ -154,11 +171,25 @@ center "Linking VSCode settings.json" "$GREEN"
 ### Pin apps to taskbar and unpin edge. (Not sure how to unpin Windows Apps Store)
 pin_to_taskbar(){
     center "Pinning Applications to taskbar" "$MAGENTA"
-    powershell -noprofile -ExecutionPolicy Bypass -file ./PinToTaskBar.ps1 "$APPDATA\Spotify\Spotify.exe" PIN
-    powershell -noprofile -ExecutionPolicy Bypass -file ./PinToTaskBar.ps1 "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" PIN
-    powershell -noprofile -ExecutionPolicy Bypass -file ./PinToTaskBar.ps1 "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" PIN
-    powershell -noprofile -ExecutionPolicy Bypass -file ./PinToTaskBar.ps1 "$LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe" PIN
-    powershell -noprofile -ExecutionPolicy Bypass -file ./PinToTaskBar.ps1 "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" UNPIN
+    center "Pinning Spotify" "$MAGENTA"
+    powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "$APPDATA\Spotify\Spotify.exe" PIN
+    center "Pinning Chrome" "$MAGENTA"
+    powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\Google\Chrome\Application\chrome.exe" PIN
+    center "Pinning VSCode" "$MAGENTA"
+    powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" PIN
+    if [ -d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe" ]; then
+     center "Pinning Windows Terminal" "$MAGENTA"
+     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe" PIN
+    elif [-d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminalPreview_1.9.1445.0_x64__8wekyb3d8bbwe"]; then
+     center "Pinning Windows Terminal Preview" "$MAGENTA"
+     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminalPreview_1.9.1445.0_x64__8wekyb3d8bbwe\wt.exe" PIN
+    else
+     center "Pinning Windows Terminal v1.8" "$MAGENTA"
+     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_1.8.1444.0_x64__8wekyb3d8bbwe\wt.exe" PIN
+    fi
+
+    center "Un-Pinning MS Edge" "$MAGENTA"
+    powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" UNPIN
 }
 
 main() {
