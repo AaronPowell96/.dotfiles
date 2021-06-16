@@ -200,14 +200,8 @@ pin_to_taskbar(){
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" UNPIN
 }
 
-main() {
-   check_running_admin
-   check_directory
-   #Choco needs terminal restart, if installed assume done first steps
-   command_exists choco || download_chocolatey
-
-   /git-bash.exe & > /dev/null 2&>1
-   echo new terminalllll
+testt(){
+    echo new terminalllll
    command_exists choco || {
         error "choco is not installed, may need to restart terminal and run setup again ZzZ"
         exit 1
@@ -219,6 +213,17 @@ main() {
    setup_dotfiles
    pin_to_taskbar
    default_windows_settings
+}
+main() {
+   check_running_admin
+   check_directory
+   #Choco needs terminal restart, if installed assume done first steps
+   command_exists choco || download_chocolatey
+
+    exit
+   /git-bash.exe & > /dev/null 2&>1
+   
+   testt
 }
 
 main
