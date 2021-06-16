@@ -69,7 +69,7 @@ default_windows_settings() {
 download_chocolatey() {
 center "Running Chocolatey Install" "$BLUE" "$BLUE"
 # ### Chocolatey install
- powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
+ powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
 }
 
 download_fonts() {
@@ -200,26 +200,23 @@ pin_to_taskbar(){
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" UNPIN
 }
 
-testt(){
-    echo serfgsdfsdfs
+main() {
+   check_running_admin
+   check_directory
+   #Choco needs terminal restart, if installed assume done first steps
+   command_exists choco || download_chocolatey
+
    command_exists choco || {
-        error "choco is not installed, may need to restart terminal and run setup again ZzZ"
+        error "Choco command not available, restart terminal and run setup again."
         exit 1
     }
-   download_fonts
+   download_fonts   
    setup_terminal
    download_packages
    setup_devtools
    setup_dotfiles
    pin_to_taskbar
    default_windows_settings
-}
-main() {
-   check_running_admin
-   check_directory
-   #Choco needs terminal restart, if installed assume done first steps
-   command_exists choco || download_chocolatey
-   testt
 }
 
 main
