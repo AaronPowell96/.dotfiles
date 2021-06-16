@@ -177,10 +177,11 @@ pin_to_taskbar(){
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\Google\Chrome\Application\chrome.exe" PIN
     center "Pinning VSCode" "$MAGENTA"
     powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" PIN
+    powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\Microsoft VS Code\Code.exe" PIN
     if [ -d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe" ]; then
      center "Pinning Windows Terminal" "$MAGENTA"
      powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe" PIN
-    elif [-d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminalPreview_1.9.1445.0_x64__8wekyb3d8bbwe"]; then
+    elif [ -d "C:\Program Files\WindowsApps\Microsoft.WindowsTerminalPreview_1.9.1445.0_x64__8wekyb3d8bbwe" ]; then
      center "Pinning Windows Terminal Preview" "$MAGENTA"
      powershell -noprofile -ExecutionPolicy Bypass -file ~/.dotfiles/PinToTaskBar.ps1 "C:\Program Files\WindowsApps\Microsoft.WindowsTerminalPreview_1.9.1445.0_x64__8wekyb3d8bbwe\wt.exe" PIN
     else
@@ -194,11 +195,11 @@ pin_to_taskbar(){
 
 main() {
    check_directory
-   default_windows_settings
-   download_chocolatey
-  
+   #Choco needs terminal restart, if installed assume done first steps
+   command_exists choco || download_chocolatey
+   exec bash
    command_exists choco || {
-        error "choco is not installed"
+        error "choco is not installed, may need to restart terminal and run setup again ZzZ"
         exit 1
     }
    download_fonts
@@ -207,6 +208,7 @@ main() {
    setup_devtools
    setup_dotfiles
    pin_to_taskbar
+   command_exists choco || default_windows_settings
 }
 
 main
