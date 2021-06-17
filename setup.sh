@@ -70,6 +70,7 @@ download_chocolatey() {
 center "Running Chocolatey Install" "$BLUE" "$BLUE"
 # ### Chocolatey install
  powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
+ powershell.exe -noprofile -executionpolicy bypass -file ~/.dotfiles/restart.ps1
 }
 
 download_fonts() {
