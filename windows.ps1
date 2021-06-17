@@ -239,6 +239,7 @@ Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advan
 
 # Taskbar: Don't show Windows Store Apps on Taskbar
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "StoreAppsOnTaskbar" 0
+Set-ItemProperty "HKCU:\Software\Policies\Microsoft\Windows\Explorer" "NoPinningStoreToTaskbar" 0
 
 # Taskbar: Disable Bing Search
 # Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\ConnectedSearch" "ConnectedSearchUseWeb" 0 # For Windows 8.1

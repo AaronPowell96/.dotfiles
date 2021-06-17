@@ -174,6 +174,7 @@ if [ -d "$APPDATA/Code" ]; then
         ln -sf ~/.dotfiles/.vscode/settings.json $APPDATA/Code/User/settings.json
     fi
 else
+mkdir $APPDATA/Code
 mkdir $APPDATA/Code/User
 ln -sf ~/.dotfiles/.vscode/settings.json $APPDATA/Code/User/settings.json
 fi
@@ -221,9 +222,9 @@ main() {
    setup_terminal
    download_packages
    setup_devtools
+   default_windows_settings
    setup_dotfiles
    pin_to_taskbar
-   default_windows_settings
 }
 
 main
