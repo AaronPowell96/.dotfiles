@@ -70,7 +70,7 @@ download_chocolatey() {
 center "Running Chocolatey Install" "$BLUE" "$BLUE"
 # ### Chocolatey install
  powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%/chocolatey/bin
- powershell.exe -noprofile -executionpolicy bypass -file ~/.dotfiles/restart.ps1
+ powershell -noprofile -executionpolicy bypass -file ~/.dotfiles/restart.ps1
 }
 
 download_fonts() {
@@ -149,6 +149,10 @@ setup_devtools() {
     command_exists yarn || {
     center "Dev Tool: Installing Yarn" "$YELLOW"
      choco install yarn -fy
+    }
+    command_exists gh || {
+    center "Dev Tool: Installing Github CLI" "$YELLOW"
+     choco install gh -fy
     }
     center "Dev Tool: Installing Java JDK 11" "$YELLOW"
      choco install corretto11jdk -fy
