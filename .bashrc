@@ -1,6 +1,6 @@
 echo "bash rc called"
-setgituser(){
-    if [ "$1" = "main" ];then
+set_git_user(){
+    if [ "$1" = "aaron" ];then
     echo "Set Git User to Aaron"
     git config --global user.name "Aaron"
     git config --global user.email "Apowell829@gmail.com"
@@ -11,13 +11,36 @@ setgituser(){
     git config --global user.email "TheAmateurJSDev@gmail.com"
     exec bash
     else
-    echo "No user found"
+    echo "No user found: 'aaron' or 'amateur'"
     fi
 }
 
 if [ -f ~/.bash_aliases ]; then
     \. ~/.bash_aliases
 fi
+
+### Set SSH Keys on startup
+env=~/.ssh/agent.env
+ssh-add ~/.ssh/*
+agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
+agent_start () {
+    (umask 077; ssh-agent >| "$env")
+    . "$env" >| /dev/null ; }
+
+agent_load_env
+
+# agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2= agent not running
+agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+
+if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+    agent_start
+    ssh-add
+elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+    ssh-add
+fi
+
+unset env
 
 ################
 ## Set Terminal Prompt
