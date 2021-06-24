@@ -1,15 +1,27 @@
 echo "bash rc called"
 set_git_user(){
     if [ "$1" = "aaron" ];then
-    echo "Set Git User to Aaron"
-    git config --global user.name "Aaron"
-    git config --global user.email "Apowell829@gmail.com"
+        if [ "$2" = "local" ];then
+            echo "Locally setting git user to Aaron"
+            git config user.name "Aaron"
+            git config user.email "Apowell829@gmail.com"
+        else
+        echo "Set Global Git User to Aaron"
+        git config --global user.name "Aaron"
+        git config --global user.email "Apowell829@gmail.com"
+        fi
     exec bash
     elif [ "$1" = "amateur" ];then
-    echo "Set Git User to Amateur Dev"
-    git config --global user.name "The Amateur Dev"
-    git config --global user.email "TheAmateurJSDev@gmail.com"
-    exec bash
+        if [ "$2" = "local" ];then
+            echo "Locally setting git user to AmateurDev"
+            git config user.name "The Amateur Dev"
+            git config user.email "TheAmateurJSDev@gmail.com"
+        else
+            echo "Set Global Git User to Amateur Dev"
+            git config --global user.name "The Amateur Dev"
+            git config --global user.email "TheAmateurJSDev@gmail.com"
+            exec bash
+        fi
     else
     echo "No user found: 'aaron' or 'amateur'"
     fi
@@ -20,8 +32,11 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 ### Set SSH Keys on startup
+shopt -s extglob
+# rm -rf ~/.ssh/agent.env
+# eval `ssh-agent -s`
 env=~/.ssh/agent.env
-ssh-add ~/.ssh/*
+ssh-add ~/.ssh/id_!(*.pub)
 agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
 
 agent_start () {

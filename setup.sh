@@ -169,6 +169,8 @@ center "Linking .bashrc" "$GREEN"
 ln -sf ~/.dotfiles/.bashrc ~/.bashrc 
 center "Linking .bash_profile" "$GREEN"
  ln -sf ~/.dotfiles/.bash_profile ~/.bash_profile
+center "Linking .inputrc" "$GREEN"
+ ln -sf ~/.dotfiles/.inputrc ~/.inputrc
 center "Linking .gitconfig" "$GREEN"
  ln -sf ~/.dotfiles/.gitconfig ~/.gitconfig
 center "Linking .vscode" "$GREEN"
